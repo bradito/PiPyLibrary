@@ -75,10 +75,12 @@ def getLightsOn(items):
 	for light in items:
 		if light[1] != 0.0:
 			lights_on.append(light)
+
+	print("lights on:", lights_on)
 	return lights_on
 
 #seems to be some error here but not sure what.
-def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, percent_on=0.15):
+def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=100, percent_on=0.15):
 	"""blinks lights randomly at percent of whole strip 
 	but with ramp up/down of randomized light color
 	to simulate fireflies"""
@@ -98,6 +100,7 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 			next_on = randrange(strip.numPixels())
 			if next_on not in current_on:
 				lights[next_on] = [random(), 0.001, 0]
+				print("adding {}".format(next_on))
 
 		#cycle through those needing a step increment
 		for i, lite in enumerate(lights):
@@ -110,9 +113,9 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 					lite[1] = lite[2] / steps_up
 				else:
 					lite[1] = (steps_total - lite[2]) / (steps_total - steps_up)
+				lite[2] = lite[2] + 1 
 
 			print("light on :{} - step:{} - brightness: {}".format(i,lite[2],lite[1]))
-			lite[2] = lite[2] + 1 
 
 			current_color = hsv_to_rgb(lite[0] , 1, lite[1])
 
