@@ -108,7 +108,7 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=100, pe
 				lite[1] = 0
 				lite[2] = -1
 
-			if (lite[2] > 0): 
+			if (lite[2] >= 0): 
 				if (lite[2] <= steps_up):
 					lite[1] = lite[2] / steps_up
 				else:
