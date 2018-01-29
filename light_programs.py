@@ -87,7 +87,7 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 
 	#create simple data structure with dictionary item for each light
 	for lite in range(strip.numPixels()):
-		lights.append((0.0, 0.0, -1)) 
+		lights.append([0.0, 0.0, -1]) 
 
 	max_on = strip.numPixels() * percent_on
 
@@ -97,7 +97,7 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 		if len(current_on) < max_on:
 			next_on = randrange(strip.numPixels())
 			if next_on not in current_on:
-				lights[next_on] = (random(), 0.001, 0)
+				lights[next_on] = [random(), 0.001, 0]
 
 		#cycle through those needing a step increment
 		for lite in lights:
