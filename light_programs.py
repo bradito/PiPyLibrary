@@ -75,17 +75,19 @@ def firefly(strip, duration=10, ramp_up_ms=100, taper_off_ms=500, percent_on=0.1
 	but with ramp up/down of randomized light color
 	to simulate fireflies"""
 	start = time.time()
-	lights_on = {}
+	lights_on = []
+	lights_color = {}
 	max_on = strip.numPixels() * percent_on
 	while start + duration > time.time():
 		if len(lights_on) < max_on:
 			next_on = randrange(strip.numPixels())
 			if next_on not in lights_on:
-				lights_on[next_on] = wheel(randrange(255))
+				lights_on.append(next_on)
+				lights_color[next_on] = wheel(randrange(255))
 		else:
 			for i in range(strip.numPixels()):
 				if i in lights_on:
-					strip.setPixelColor(i, lights_on[i])
+					strip.setPixelColor(i, lights_color[i])
 				else:
 					strip.setPixelColor(i, Color(0,0,0))
 			strip.show()
@@ -174,10 +176,10 @@ if __name__ == '__main__':
 				altColor(strip, [Color(0,255,0)])
 				time.sleep(1)
 			else: # button is pressed
-				print ('Random Blinker')
-				random_blinker(strip, Color(255, 255, 255))
 				print ('firefly')
 				firefly(strip)
+				print ('Random Blinker')
+				random_blinker(strip, Color(255, 255, 255))
 				print ('Color wipe animations.')
 				colorWipe(strip, Color(255, 0, 0))  # Red wipe
 				colorWipe(strip, Color(0, 255, 0))  # Blue wipe
