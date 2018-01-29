@@ -91,8 +91,8 @@ def firefly(strip, duration=10, steps_up=10, steps_total=60, step_delay_ms=10, p
 			for i in range(strip.numPixels()):
 				if i in lights_on:
 					if lights_step[i] == steps_total:
-						del lights_on[i]
 						brightness = 0
+						lights_on = lights_on[1:]
 					if lights_step[i] <= steps_up:
 						brightness = lights_step[i] / steps_up
 					else:
