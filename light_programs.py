@@ -86,9 +86,9 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 
 	#create simple data structure with dictionary item for each light
 	for lite in range(strip.numPixels()):
-		lights[lite]['hue'] = 0.0
-		lights[lite]['bright'] = 0.0
-		lights[lite]['step'] = -1
+		lights[lite] = {'hue': 0.0}
+		lights[lite] = {'bright':  0.0}
+		lights[lite] = {'step' :  -1 }
 
 	max_on = strip.numPixels() * percent_on
 
