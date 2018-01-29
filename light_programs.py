@@ -71,7 +71,7 @@ def random_blinker(strip, color, duration=10, flash_ms=10, percent_on=0.15):
 			time.sleep(flash_ms/1000)
 
 #seems to be some error here but not sure what.
-def firefly(strip, duration=10, steps_up=10, steps_total=60, step_delay_ms=10, percent_on=0.15):
+def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, percent_on=0.15):
 	"""blinks lights randomly at percent of whole strip 
 	but with ramp up/down of randomized light color
 	to simulate fireflies"""
@@ -97,7 +97,7 @@ def firefly(strip, duration=10, steps_up=10, steps_total=60, step_delay_ms=10, p
 						brightness = lights_step[i] / steps_up
 					else:
 						brightness = (steps_total - lights_step[i]) / (steps_total - steps_up)
-#					print("light on :{} - step:{} - brightness: {}".format(i,lights_step[i],brightness))
+					print("light on :{} - step:{} - brightness: {}".format(i,lights_step[i],brightness))
 					current_color = hsv_to_rgb(lights_color_hue[i], 1, brightness)
 					current_int_color = Color(int(current_color[0]*255), int(current_color[1]*255), int(current_color[2]*255))  
 					strip.setPixelColor(i, current_int_color)
