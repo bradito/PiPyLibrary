@@ -69,6 +69,28 @@ def random_blinker(strip, color, duration=10, flash_ms=10, percent_on=0.15):
 			lights_on = lights_on[1:]
 			time.sleep(flash_ms/1000)
 
+#seems to be some error here but not sure what.
+def firefly(strip, duration=10, ramp_up_ms=100, taper_off_ms=500, percent_on=0.15):
+	"""blinks lights randomly at percent of whole strip 
+	but with ramp up/down of randomized light color
+	to simulate fireflies"""
+	start = time.time()
+	lights_on = {}
+	max_on = strip.numPixels() * percent_on
+	while start + duration > time.time():
+		if len(lights_on) < max_on:
+			next_on = randrange(strip.numPixels())
+			if next_on not in lights_on:
+				lights_on[next_on] = wheel(randrange(255))
+		else:
+			for i in range(strip.numPixels()):
+				if i in lights_on:
+					strip.setPixelColor(i, lights_on[i])
+				else:
+					strip.setPixelColor(i, Color(0,0,0))
+			strip.show()
+			lights_on = lights_on[1:]
+			time.sleep(ramp_up_ms/1000)
 
 def colorWipe(strip, color, wait_ms=50):
 	"""Wipe color across display a pixel at a time."""
@@ -154,6 +176,8 @@ if __name__ == '__main__':
 			else: # button is pressed
 				print ('Random Blinker')
 				random_blinker(strip, Color(255, 255, 255))
+				print ('firefly')
+				firefly(strip)
 				print ('Color wipe animations.')
 				colorWipe(strip, Color(255, 0, 0))  # Red wipe
 				colorWipe(strip, Color(0, 255, 0))  # Blue wipe
