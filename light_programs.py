@@ -70,42 +70,66 @@ def random_blinker(strip, color, duration=10, flash_ms=10, percent_on=0.15):
 			lights_on = lights_on[1:]
 			time.sleep(flash_ms/1000)
 
+def getLightsOn(items):
+	count_on = []
+	for k, v in items.items():
+		if v.get('bright',0) == 0.0:
+			count_on.append(k)
+
 #seems to be some error here but not sure what.
 def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, percent_on=0.15):
 	"""blinks lights randomly at percent of whole strip 
 	but with ramp up/down of randomized light color
 	to simulate fireflies"""
 	start = time.time()
-	lights_on = []
-	lights_color_hue = {}
-	lights_step = {}
+	lights = {}
+
+	#create simple data structure with dictionary item for each light
+	for lite in range(strip.numPixels()):
+		lights[lite]['hue'] = 0.0
+		lights[lite]['bright'] = 0.0
+		lights[lite]['step'] = -1
+
 	max_on = strip.numPixels() * percent_on
+
+
+
 	while start + duration > time.time():
-		if len(lights_on) < max_on:
+		#determine if to seed another light by setting the step 
+		current_on = getLightsOn(lights)
+		if len(current_on) < max_on:
 			next_on = randrange(strip.numPixels())
-			if next_on not in lights_on:
-				lights_on.append(next_on)
-				lights_color_hue[next_on] = random()
-				lights_step[next_on] = 0
-		else:
-			for i in range(strip.numPixels()):
-				if i in lights_on:
-					if lights_step[i] == steps_total:
-						brightness = 0
-						lights_on = lights_on[1:]
-					if lights_step[i] <= steps_up:
-						brightness = lights_step[i] / steps_up
-					else:
-						brightness = (steps_total - lights_step[i]) / (steps_total - steps_up)
-					print("light on :{} - step:{} - brightness: {}".format(i,lights_step[i],brightness))
-					current_color = hsv_to_rgb(lights_color_hue[i], 1, brightness)
-					current_int_color = Color(int(current_color[0]*255), int(current_color[1]*255), int(current_color[2]*255))  
-					strip.setPixelColor(i, current_int_color)
-					lights_step[i] = lights_step[i] + 1 
+			if next_on not in current_on:
+				lights[next_on]['hue']= random()
+				lights[next_on]['bright'] = 0.001
+				lights[next_on]['step'] = 0
+
+		#cycle through those needing a step increment
+		for key, lite in lights.items():
+			if lite['step'] == steps_total:
+				lite['bright'] = 0
+				lite['step'] = -1
+
+			if (lite['step'] > 0): 
+				if (lite['step'] <= steps_up):
+					lite['bright'] = lite['step'] / steps_up
 				else:
-					strip.setPixelColor(i, Color(0,0,0))
-			strip.show()
-			time.sleep(step_delay_ms/1000)
+					lite['bright'] = (steps_total - lite['step']) / (steps_total - steps_up)
+
+			print("light on :{} - step:{} - brightness: {}".format(lite,lite['step'],lite['bright']))
+			lite['step'] = lite['step'] + 1 
+
+			current_color = hsv_to_rgb(lite['hue'] , 1, lite['bright'])
+
+			current_int_color = Color(
+									int(current_color[0]*255),
+									int(current_color[1]*255),
+									int(current_color[2]*255))  
+
+			strip.setPixelColor(key, current_int_color)
+
+		strip.show()
+		time.sleep(step_delay_ms/1000)
 
 def colorWipe(strip, color, wait_ms=50):
 	"""Wipe color across display a pixel at a time."""
