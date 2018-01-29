@@ -98,6 +98,7 @@ def firefly(strip, duration=10, steps_up=10, steps_total=60, step_delay_ms=500, 
 						brightness = (steps_total - steps_up - lights_step[i]) / steps_total
 					current_color = hsv_to_rgb(lights_color_hue[i], 1, brightness)
 					current_int_color = Color(int(current_color[0]*255), int(current_color[1]*255), int(current_color[2]*255))  
+					print("R:{} G:{} B:{}".format(current_int_color))
 					strip.setPixelColor(i, current_int_color)
 					lights_step[next_on] = lights_step[next_on] + 1 
 				else:
