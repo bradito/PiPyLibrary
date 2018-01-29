@@ -75,6 +75,7 @@ def getLightsOn(items):
 	for k, v in items.items():
 		if v.get('bright',0) == 0.0:
 			count_on.append(k)
+	return count_on
 
 #seems to be some error here but not sure what.
 def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, percent_on=0.15):
