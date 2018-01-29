@@ -100,7 +100,7 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 				lights[next_on] = [random(), 0.001, 0]
 
 		#cycle through those needing a step increment
-		for lite in lights:
+		for i, lite in enumerate(lights):
 			if lite[2] == steps_total:
 				lite[1] = 0
 				lite[2] = -1
@@ -121,7 +121,7 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 									int(current_color[1]*255),
 									int(current_color[2]*255))  
 
-			strip.setPixelColor(key, current_int_color)
+			strip.setPixelColor(i, current_int_color)
 
 		strip.show()
 		time.sleep(step_delay_ms/1000)
