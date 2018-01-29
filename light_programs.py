@@ -99,7 +99,8 @@ def firefly(strip, duration=10, steps_up=10, steps_total=50, step_delay_ms=10, p
 		if len(current_on) < max_on:
 			next_on = randrange(strip.numPixels())
 			if next_on not in current_on:
-				lights[next_on] = [random(), 0.001, 0]
+				if random() > 0.5:
+					lights[next_on] = [random(), 0.001, 0]
 #				print("adding {}".format(next_on))
 
 		#cycle through those needing a step increment
