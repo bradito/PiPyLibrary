@@ -4,7 +4,8 @@ import argparse
 import signal
 import sys
 import RPi.GPIO as GPIO
-from random import randrange
+from random import random, randrange
+from colorsys import hsv_to_rgb
 
 
 #TODO create a class for my strip
@@ -70,29 +71,38 @@ def random_blinker(strip, color, duration=10, flash_ms=10, percent_on=0.15):
 			time.sleep(flash_ms/1000)
 
 #seems to be some error here but not sure what.
-def firefly(strip, duration=10, ramp_up_ms=100, taper_off_ms=500, percent_on=0.15):
+def firefly(strip, duration=10, steps_up=10, steps_total=60, step_delay_ms=500, percent_on=0.15):
 	"""blinks lights randomly at percent of whole strip 
 	but with ramp up/down of randomized light color
 	to simulate fireflies"""
 	start = time.time()
 	lights_on = []
-	lights_color = {}
+	lights_color_hue = {}
+	lights_step = {}
 	max_on = strip.numPixels() * percent_on
 	while start + duration > time.time():
 		if len(lights_on) < max_on:
 			next_on = randrange(strip.numPixels())
 			if next_on not in lights_on:
 				lights_on.append(next_on)
-				lights_color[next_on] = wheel(randrange(255))
+				lights_color_hue[next_on] = random()
+				lights_step[next_on] = 0
 		else:
 			for i in range(strip.numPixels()):
 				if i in lights_on:
-					strip.setPixelColor(i, lights_color[i])
+					if lights_step[i] == steps_total:
+						del lights_on[i]
+					if lights_step[i] <= steps_up:
+						brightness = lights_step[i] / steps_up
+					else:
+						brightness = (steps_total - steps_up - lights_step[i]) / steps_total
+					current_color = hsv_to_rgb(lights_color_hue[i], 1, brightness)   
+					strip.setPixelColor(i, current_color)
+					lights_step[next_on] = lights_step[next_on] + 1 
 				else:
 					strip.setPixelColor(i, Color(0,0,0))
 			strip.show()
-			lights_on = lights_on[1:]
-			time.sleep(ramp_up_ms/1000)
+			time.sleep(step_delay_ms/1000)
 
 def colorWipe(strip, color, wait_ms=50):
 	"""Wipe color across display a pixel at a time."""
