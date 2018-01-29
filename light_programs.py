@@ -111,7 +111,7 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 				else:
 					lite[1] = (steps_total - lite[2]) / (steps_total - steps_up)
 
-			print("light on :{} - step:{} - brightness: {}".format(lite,lite[2],lite[1]))
+			print("light on :{} - step:{} - brightness: {}".format(i,lite[2],lite[1]))
 			lite[2] = lite[2] + 1 
 
 			current_color = hsv_to_rgb(lite[0] , 1, lite[1])
