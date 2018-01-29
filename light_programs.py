@@ -71,11 +71,11 @@ def random_blinker(strip, color, duration=10, flash_ms=10, percent_on=0.15):
 			time.sleep(flash_ms/1000)
 
 def getLightsOn(items):
-	count_on = []
-	for k, v in items.items():
-		if v.get('bright',0) == 0.0:
-			count_on.append(k)
-	return count_on
+	lights_on = []
+	for light in items:
+		if light[1] != 0.0:
+			lights_on.append(light)
+	return lights_on
 
 #seems to be some error here but not sure what.
 def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, percent_on=0.15):
@@ -83,17 +83,13 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 	but with ramp up/down of randomized light color
 	to simulate fireflies"""
 	start = time.time()
-	lights = {}
+	lights = []
 
 	#create simple data structure with dictionary item for each light
 	for lite in range(strip.numPixels()):
-		lights[lite] = {'hue': 0.0}
-		lights[lite] = {'bright':  0.0}
-		lights[lite] = {'step' :  -1 }
+		lights.append((0.0, 0.0, -1)) 
 
 	max_on = strip.numPixels() * percent_on
-
-
 
 	while start + duration > time.time():
 		#determine if to seed another light by setting the step 
@@ -101,26 +97,24 @@ def firefly(strip, duration=10, steps_up=3, steps_total=8, step_delay_ms=10, per
 		if len(current_on) < max_on:
 			next_on = randrange(strip.numPixels())
 			if next_on not in current_on:
-				lights[next_on]['hue']= random()
-				lights[next_on]['bright'] = 0.001
-				lights[next_on]['step'] = 0
+				lights[next_on] = (random(), 0.001, 0)
 
 		#cycle through those needing a step increment
-		for key, lite in lights.items():
-			if lite['step'] == steps_total:
-				lite['bright'] = 0
-				lite['step'] = -1
+		for lite in lights:
+			if lite[2] == steps_total:
+				lite[1] = 0
+				lite[2] = -1
 
-			if (lite['step'] > 0): 
-				if (lite['step'] <= steps_up):
-					lite['bright'] = lite['step'] / steps_up
+			if (lite[2] > 0): 
+				if (lite[2] <= steps_up):
+					lite[1] = lite[2] / steps_up
 				else:
-					lite['bright'] = (steps_total - lite['step']) / (steps_total - steps_up)
+					lite[1] = (steps_total - lite[2]) / (steps_total - steps_up)
 
-			print("light on :{} - step:{} - brightness: {}".format(lite,lite['step'],lite['bright']))
-			lite['step'] = lite['step'] + 1 
+			print("light on :{} - step:{} - brightness: {}".format(lite,lite[2],lite[1]))
+			lite[2] = lite[2] + 1 
 
-			current_color = hsv_to_rgb(lite['hue'] , 1, lite['bright'])
+			current_color = hsv_to_rgb(lite[0] , 1, lite[1])
 
 			current_int_color = Color(
 									int(current_color[0]*255),
